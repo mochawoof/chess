@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 class Main {
     public static void main(String[] args) {
@@ -18,6 +20,15 @@ class Main {
         f.setSize(500, 400);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
+        Image sprite;
+        try {
+            sprite = ImageIO.read(new File("theme.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(f, "Error", "Theme image is unreadable or doesn't exist!", JOptionPane.ERROR_MESSAGE);
+            f.dispose();
+        }
+        
         f.add(new JComponent() {
             {
                 //
@@ -26,8 +37,8 @@ class Main {
             public void paintComponent(Graphics g) {
                 int x = 0;
                 int y = 0;
-                int w = 512;
-                int h = 512;
+                int w = 640;
+                int h = 640;
                 
                 if (getWidth() > getHeight()) {
                     w = (int) (w * ((double) getHeight() / h));
