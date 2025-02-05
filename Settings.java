@@ -20,7 +20,7 @@ class Settings {
     // Settings with a . preceding their names will not be shown to the user
     // Underscores will be shown to the user as spaces
     public static HashMap<String, String[]> defaults = new HashMap<String, String[]>() {{
-        put("Theme", new String[] {"Metal", "Nimbus", "CDE/Motif", "Windows", "Windows Classic"});
+        put("Theme", new String[] {"Nimbus", "Metal", "CDE/Motif", "Windows", "Windows Classic"});
     }};
     
     private static void applyDefaults() {

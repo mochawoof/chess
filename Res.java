@@ -15,6 +15,9 @@ class Res {
     public static Image getAsImage(String path) {
         return getAsImageIcon(path).getImage();
     }
+    public static Image getAsScaledImage(String path, int w, int h) {
+        return getAsImage(path).getScaledInstance(w, h, Image.SCALE_SMOOTH);
+    }
     public static InputStream getAsStream(String path) {
         return Res.class.getResourceAsStream(path);
     }
