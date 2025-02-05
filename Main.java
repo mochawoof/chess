@@ -3,13 +3,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 class Main {
     public static void main(String[] args) {
         // Apply look and feel from settings
         try {
             for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
-                if (Settings.get("Theme").equals(laf.getName())) {
+                if (Settings.get("App_Theme").equals(laf.getName())) {
                     UIManager.setLookAndFeel(laf.getClassName());
                     break;
                 }
@@ -20,14 +21,18 @@ class Main {
         f.setSize(500, 400);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        Image sprite;
+        BufferedImage sprite = null;
         try {
-            sprite = ImageIO.read(new File("theme.png"));
+            Image si = ImageIO.read(new File("theme.png"));
+            sprite = new BufferedImage(si.getWidth(null), si.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            sprite.getGraphics().drawImage(si, 0, 0, null);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(f, "Error", "Theme image is unreadable or doesn't exist!", JOptionPane.ERROR_MESSAGE);
             f.dispose();
         }
+        
+        BufferedImage board = sprite.getSubimage(0, 0, 640, 640);
         
         f.add(new JComponent() {
             {
@@ -51,8 +56,7 @@ class Main {
                 x = (getWidth() / 2) - (w / 2);
                 y = (getHeight() / 2) - (h / 2);
                 
-                g.setColor(Color.RED);
-                g.fillRect(x, y, w, h);
+                g.drawImage(board.getScaledInstance(w, h, Image.SCALE_SMOOTH), x, y, null);
             }
         });
         
@@ -62,11 +66,10 @@ class Main {
         mb.add(game);
             JMenuItem neww = new JMenuItem("New");
             game.add(neww);
-        JMenu settings = new JMenu("Settings");
-        mb.add(settings);
-            JMenuItem editSettings = new JMenuItem("Edit Settings...");
-            settings.add(editSettings);
-            editSettings.addActionListener(new ActionListener() {
+            
+            JMenuItem settings = new JMenuItem("Settings...");
+            game.add(settings);
+            settings.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     int o = Settings.show(f);
                     if (o == Settings.OK || o == Settings.RESET) {
@@ -75,9 +78,10 @@ class Main {
                     }
                 }
             });
-            
+        JMenu help = new JMenu("Help");
+        mb.add(help);
             JMenuItem about = new JMenuItem("About");
-            settings.add(about);
+            help.add(about);
         
         f.setVisible(true);
     }
