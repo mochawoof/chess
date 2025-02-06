@@ -32,7 +32,7 @@ class Main {
             f.dispose();
         }
         
-        BufferedImage board = sprite.getSubimage(0, 0, 640, 640);
+        BufferedImage board = sprite.getSubimage(0, 0, 1152, 1152);
         
         f.add(new JComponent() {
             {
@@ -42,8 +42,8 @@ class Main {
             public void paintComponent(Graphics g) {
                 int x = 0;
                 int y = 0;
-                int w = 640;
-                int h = 640;
+                int w = board.getWidth();
+                int h = board.getHeight();
                 
                 if (getWidth() > getHeight()) {
                     w = (int) (w * ((double) getHeight() / h));
@@ -82,6 +82,9 @@ class Main {
         mb.add(help);
             JMenuItem about = new JMenuItem("About");
             help.add(about);
+        mb.add(Box.createGlue());
+        JMenu timer = new JMenu("0:00");
+        mb.add(timer);
         
         f.setVisible(true);
     }
