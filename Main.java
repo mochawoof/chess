@@ -6,18 +6,25 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
 class Main {
-    private static boolean gameStarted = false;
+    private static boolean gameStarted;
     // Pieces are indexed in their order on the spritesheet
     private static int NONE = 0; private static int ROOK = 1; private static int KNIGHT = 2; private static int BISHOP = 3; private static int QUEEN = 4; private static int KING = 5; private static int PAWN = 6;
     
     private static int BLACK = 0; private static int WHITE = 1;
-    private static int whosMoving = WHITE;
+    private static int whosMoving;
 
-    private static int[][] gamee = new int[8][8];
-    private static long timerStartedAt = 0;
-    private static Timer timerUpdater = null;
+    private static int[][] gamee;
+    private static long timerStartedAt;
+    private static Timer timerUpdater;
 
     public static void main(String[] args) {
+        // Reset variables
+        gameStarted = false;
+        whosMoving = WHITE;
+        gamee = new int[8][8];
+        timerStartedAt = 0;
+        timerUpdater = null;
+
         // Apply look and feel from settings
         try {
             for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
@@ -88,6 +95,20 @@ class Main {
         mb.add(game);
             JMenuItem neww = new JMenuItem("New");
             game.add(neww);
+
+            JMenuItem end = new JMenuItem("End");
+            end.setEnabled(false);
+            game.add(end);
+
+            end.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (timerUpdater != null) {timerUpdater.stop();}
+                    gameStarted = false;
+                    neww.setEnabled(true);
+                    end.setEnabled(false);
+                }
+            });
+
             neww.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     whosMoving = WHITE;
@@ -107,15 +128,10 @@ class Main {
                     timerStartedAt = System.currentTimeMillis();
 
                     gameStarted = true;
+                    neww.setEnabled(false);
+                    end.setEnabled(true);
                 }
             });
-
-            JMenuItem pause = new JMenuItem("Pause");
-            pause.setEnabled(false);
-            game.add(pause);
-
-            JMenuItem end = new JMenuItem("End");
-            game.add(end);
             
             JMenuItem settings = new JMenuItem("Settings...");
             game.add(settings);
@@ -123,8 +139,15 @@ class Main {
                 public void actionPerformed(ActionEvent e) {
                     int o = Settings.show(f);
                     if (o == Settings.OK || o == Settings.RESET) {
-                        f.dispose();
-                        main(args);
+                        if (gameStarted) {
+                            if (JOptionPane.showConfirmDialog(f, "Applying settings will end the current game. Continue?", "Confirm", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                                f.dispose();
+                                main(args);
+                            }
+                        } else {
+                            f.dispose();
+                            main(args);
+                        }
                     }
                 }
             });
